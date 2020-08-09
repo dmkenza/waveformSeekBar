@@ -2,7 +2,7 @@
 <resources>
 
     <declare-styleable name="WaveformSeekBar">
-        <attr name="wave_progress" format="integer"/>
+        <attr name="wave_progress" format="float"/>
         <attr name="wave_width" format="dimension"/>
         <attr name="wave_gap" format="dimension"/>
         <attr name="wave_min_height" format="dimension"/>

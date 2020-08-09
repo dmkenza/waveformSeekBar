@@ -65,20 +65,20 @@
                 android:layout_height="wrap_content">
 
             <com.masoudss.lib.WaveformSeekBar
-                    app:wave_progress="33"
-                    app:wave_width="5dp"
-                    app:wave_gap="2dp"
-                    app:wave_min_height="5dp"
-                    app:wave_corner_radius="2dp"
-                    app:wave_background_color="@color/white"
-                    app:wave_progress_color="@color/blue"
-                    app:wave_gravity="center"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="16dp"
-                    android:id="@+id/waveformSeekBar"
-                    android:layout_gravity="center"
-                    android:layout_width="300dp"
-                    android:layout_height="50dp"/>
+                android:id="@+id/waveformSeekBar"
+                android:layout_width="350dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                app:wave_background_color="@color/white"
+                app:wave_corner_radius="2dp"
+                app:wave_gap="2dp"
+                app:wave_gravity="center"
+                app:wave_min_height="5dp"
+                app:wave_progress="33"
+                app:wave_progress_color="@color/blue"
+                app:wave_width="5dp" />
 
 
             <TextView

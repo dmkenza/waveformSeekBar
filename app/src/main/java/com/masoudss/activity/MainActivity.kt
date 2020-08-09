@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         waveformSeekBar.apply {
-            progress = 33
+            progress = 33f
             waveWidth = Utils.dp(this@MainActivity, 5)
             waveGap = Utils.dp(this@MainActivity, 2)
             waveMinHeight = Utils.dp(this@MainActivity, 5)
@@ -41,11 +41,12 @@ class MainActivity : AppCompatActivity() {
             waveProgressColor = ContextCompat.getColor(this@MainActivity, R.color.blue)
             sample = getDummyWaveSample()
             onProgressChanged = object : SeekBarOnProgressChanged {
-                override fun onProgressChanged(waveformSeekBar: WaveformSeekBar, progress: Int, fromUser: Boolean) {
+                override fun onProgressChanged(waveform: Waveform, progress: Float, fromUser: Boolean) {
                     if (fromUser)
-                        waveProgress.progress = progress
+                        waveProgress.progress = progress.toInt()
                 }
             }
+
         }
 
         waveWidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
@@ -80,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
         waveProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                waveformSeekBar.progress = progress
+                waveformSeekBar.progress = progress.toFloat()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}

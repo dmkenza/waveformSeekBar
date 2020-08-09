@@ -2,272 +2,205 @@ package com.masoudss.lib
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.*
-import android.os.Build
+import android.graphics.Color
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
-import androidx.annotation.RequiresApi
-import com.masoudss.lib.exception.SampleDataException
-import com.masoudss.lib.soundParser.SoundFile
-import java.io.File
-import kotlin.math.abs
+import android.widget.FrameLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.kadencelibrary.extension.view.afterMeasured
+import kotlinx.android.synthetic.main.view_wavefrom_seekbar.view.*
 
-class WaveformSeekBar : View {
 
-    private var mCanvasWidth = 0
-    private var mCanvasHeight = 0
+class WaveformSeekBar @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val mWavePaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val mWaveRect = RectF()
-    private val mProgressCanvas = Canvas()
-    private var mMaxValue = Utils.dp(context, 2).toInt()
-    private var mTouchDownX = 0F
-    private var mScaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    init {
+        LayoutInflater.from(context).inflate(R.layout.view_wavefrom_seekbar, this, true)
 
-    constructor(context: Context?) : super(context){
-        init(null)
-    }
-
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs){
-        init(attrs)
-    }
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr){
-        init(attrs)
-    }
-
-    private fun init(attrs: AttributeSet?){
-
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.WaveformSeekBar)
-
-        waveWidth = ta.getDimension(R.styleable.WaveformSeekBar_wave_width,waveWidth)
-        waveGap = ta.getDimension(R.styleable.WaveformSeekBar_wave_gap,waveGap)
-        waveCornerRadius = ta.getDimension(R.styleable.WaveformSeekBar_wave_corner_radius,waveCornerRadius)
-        waveMinHeight = ta.getDimension(R.styleable.WaveformSeekBar_wave_min_height,waveMinHeight)
-        waveBackgroundColor = ta.getColor(R.styleable.WaveformSeekBar_wave_background_color,waveBackgroundColor)
-        waveProgressColor = ta.getColor(R.styleable.WaveformSeekBar_wave_progress_color,waveProgressColor)
-        progress = ta.getInteger(R.styleable.WaveformSeekBar_wave_progress,progress)
-        val gravity = ta.getString(R.styleable.WaveformSeekBar_wave_gravity)
-        waveGravity = when(gravity){
-            "1" -> WaveGravity.TOP
-            "2" -> WaveGravity.CENTER
-            else -> WaveGravity.BOTTOM
+        afterMeasured {
+            initData()
         }
 
-        ta.recycle()
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        mCanvasWidth = w
-        mCanvasHeight = h
-    }
 
-    @SuppressLint("DrawAllocation")
-    override fun onDraw(canvas: Canvas) {
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initData() {
 
-        super.onDraw(canvas)
-        if (sample == null || sample!!.isEmpty())
-            throw SampleDataException()
+        val waveformWidth = waveform.width
 
-        mMaxValue  = sample!!.max()!!
-        val step = (getAvailableWith() / (waveGap+waveWidth))/sample!!.size
+        var dX1: Float = -1f
+        var dX2: Float = -1f//waveform.width.toFloat()
 
-        var i = 0F
-        var lastWaveRight = paddingLeft.toFloat()
-        while ( i < sample!!.size){
+        bt_marker_left.setOnTouchListener { v, event ->
 
-            var waveHeight = getAvailableHeight() * (sample!![i.toInt()].toFloat() / mMaxValue)
-
-            if(waveHeight < waveMinHeight)
-                waveHeight = waveMinHeight
-
-            val top : Float = when(waveGravity){
-                WaveGravity.TOP -> paddingTop.toFloat()
-                WaveGravity.CENTER -> paddingTop+getAvailableHeight()/2F - waveHeight/2F
-                WaveGravity.BOTTOM -> mCanvasHeight - paddingBottom - waveHeight
-            }
-
-            mWaveRect.set(lastWaveRight, top, lastWaveRight+waveWidth, top + waveHeight)
-
-            when {
-                mWaveRect.contains(getAvailableWith()*progress/100F, mWaveRect.centerY()) -> {
-                    var bitHeight = mWaveRect.height().toInt()
-                    if (bitHeight <= 0)
-                        bitHeight = waveWidth.toInt()
-
-                    val bitmap = Bitmap.createBitmap(getAvailableWith(),bitHeight , Bitmap.Config.ARGB_8888)
-                    mProgressCanvas.setBitmap(bitmap)
-
-                    val fillWidth = (getAvailableWith()*progress/100F)
-
-                    mWavePaint.color = waveProgressColor
-                    mProgressCanvas.drawRect(0F,0F,fillWidth,mWaveRect.bottom,mWavePaint)
-
-                    mWavePaint.color = waveBackgroundColor
-                    mProgressCanvas.drawRect(fillWidth,0F,getAvailableWith().toFloat(),mWaveRect.bottom,mWavePaint)
-
-                    val shader = BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
-                    mWavePaint.shader = shader
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    if (dX1 == -1f) {
+                        dX1 = this.getX() - event.rawX - v.width
+                    }
                 }
-                mWaveRect.right <= getAvailableWith()*progress/100F -> {
-                    mWavePaint.color = waveProgressColor
-                    mWavePaint.shader = null
+                MotionEvent.ACTION_MOVE -> {
+
+                    var moveX = event.rawX + dX1
+
+                    val testX = (moveX + v.width/2)
+
+                    val percent = testX/ waveformWidth.toFloat()
+
+                    if(waveform.rangeRight < percent  * 100){
+                        return@setOnTouchListener false
+                    }
+
+                    if(testX< 0  ){
+                        v.setBias(0f, false)
+                        return@setOnTouchListener false
+                    }
+
+                    if(testX > waveformWidth){
+                        v.setBias(100f, false)
+                        return@setOnTouchListener false
+                    }
+
+
+                    v.setBias(percent, false)
+
+                    waveform.rangeLeft = percent  * 100f
+                    waveform.setProgress ( percent  * 100f, false )
+                    waveform.invalidate()
+
                 }
-                else -> {
-                    mWavePaint.color = waveBackgroundColor
-                    mWavePaint.shader = null
+                else -> return@setOnTouchListener false
+            }
+            return@setOnTouchListener true
+        }
+
+
+        bt_marker_right.setOnTouchListener { v, event ->
+
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    if (dX2 == -1f) {
+                        dX2 = this.getX() - event.rawX + waveformWidth - v.width
+                    }
+
                 }
+                MotionEvent.ACTION_MOVE -> {
+
+                    var moveX = event.rawX + dX2
+
+                    val testX = (moveX + v.width/2)
+
+
+                    val percent = testX/ waveformWidth.toFloat()
+
+                    if(waveform.rangeLeft > percent  * 100){
+                        return@setOnTouchListener false
+                    }
+
+                    if(testX< 0  ){
+                        v.setBias(0f, false)
+                        return@setOnTouchListener false
+                    }
+
+                    if(testX > waveformWidth){
+                        v.setBias(100f, false)
+                        return@setOnTouchListener false
+                    }
+
+
+                    v.setBias(percent, false)
+
+                    waveform.rangeRight = percent  * 100f
+                    waveform.setProgress ( percent  * 100f, false)
+                    waveform.invalidate()
+
+                }
+                else -> return@setOnTouchListener false
             }
-
-            canvas.drawRoundRect(mWaveRect,waveCornerRadius,waveCornerRadius,mWavePaint)
-
-            lastWaveRight = mWaveRect.right+waveGap
-
-            if (lastWaveRight+waveWidth > getAvailableWith()+paddingLeft)
-                break
-
-            i += 1 / step
+            return@setOnTouchListener true
         }
+
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (!isEnabled)
-            return false
-
-        when(event!!.action){
-            MotionEvent.ACTION_DOWN ->{
-                if (isParentScrolling())
-                    mTouchDownX = event.x
-                else
-                    updateProgress(event)
-            }
-            MotionEvent.ACTION_MOVE ->{
-                    updateProgress(event)
-            }
-            MotionEvent.ACTION_UP ->{
-                if (abs(event.x - mTouchDownX) > mScaledTouchSlop)
-                    updateProgress(event)
-
-                performClick()
-            }
-        }
-        return true
-    }
-
-    private fun isParentScrolling() : Boolean{
-        var parent = parent as View
-        val root = rootView
-
-        while (true){
-            when {
-                parent.canScrollHorizontally(1) -> return true
-                parent.canScrollHorizontally(-1) -> return true
-                parent.canScrollVertically(1) -> return true
-                parent.canScrollVertically(-1) -> return true
-            }
-
-            if (parent == root)
-                return false
-
-            parent = parent.parent as View
-
-        }
-    }
-
-    private fun updateProgress(event: MotionEvent?){
-
-        progress = (100*event!!.x/getAvailableWith()).toInt()
-        invalidate()
-
-        if (onProgressChanged != null)
-            onProgressChanged!!.onProgressChanged(this,progress,true)
-    }
-
-    override fun performClick(): Boolean {
-        super.performClick()
-        return true
-    }
-
-    private fun getAvailableWith() = mCanvasWidth-paddingLeft-paddingRight
-    private fun getAvailableHeight() = mCanvasHeight-paddingTop-paddingBottom
-
-    var onProgressChanged : SeekBarOnProgressChanged? = null
-
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
-    fun setSampleFrom(path: String, ignoreExtension: Boolean = false) {
-        sample = WaveformOptions.getSampleFrom(path, ignoreExtension)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
-    fun setSampleFrom(file: File, ignoreExtension: Boolean = false) {
-        sample = WaveformOptions.getSampleFrom(file, ignoreExtension)
-    }
-
-    fun addCustomExtension(extension: String) = WaveformOptions.addCustomExtension(extension)
-
-    fun removeCustomExtension(extension: String) = WaveformOptions.removeCustomExtension(extension)
-
-    fun addCustomExtensions(extensions: List<String>) = WaveformOptions.addCustomExtensions(extensions)
-
-    fun removeCustomExtensions(extensions: List<String>) = WaveformOptions.removeCustomExtensions(extensions)
 
     var sample: IntArray? = null
-        set(value){
+        set(value) {
+            waveform?.sample = value
             field = value
-            invalidate()
         }
 
-    var progress : Int = 0
+    var progress: Float = 0f
         set(value) {
+            waveform?.setProgress(value, false)
             field = value
-            invalidate()
-
-            if (onProgressChanged != null)
-                onProgressChanged!!.onProgressChanged(this,progress,false)
         }
 
-    var waveBackgroundColor : Int = Color.LTGRAY
+    var waveBackgroundColor: Int = Color.LTGRAY
         set(value) {
-          field = value
-            invalidate()
-        }
-
-    var waveProgressColor : Int = Color.WHITE
-        set(value) {
-          field = value
-            invalidate()
-        }
-
-    var waveGap : Float = Utils.dp(context,2)
-        set(value) {
-          field = value
-            invalidate()
-        }
-
-    var waveWidth : Float = Utils.dp(context,5)
-        set(value) {
-          field = value
-            invalidate()
-        }
-
-    var waveMinHeight : Float = waveWidth
-        set(value) {
+            waveform?.waveBackgroundColor = value
             field = value
-            invalidate()
         }
 
-    var waveCornerRadius : Float = Utils.dp(context,2)
+    var waveProgressColor: Int = Color.WHITE
         set(value) {
-          field = value
-            invalidate()
+            waveform?.waveProgressColor = value
+            field = value
         }
 
-    var waveGravity : WaveGravity = WaveGravity.CENTER
+    var waveGap: Float = Utils.dp(context, 2)
         set(value) {
-          field = value
-            invalidate()
+            waveform?.waveGap = value
+            field = value
         }
+
+    var waveWidth: Float = Utils.dp(context, 5)
+        set(value) {
+            waveform?.waveWidth = value
+            field = value
+        }
+
+    var waveMinHeight: Float = waveWidth
+        set(value) {
+            waveform?.waveMinHeight = value
+            field = value
+        }
+
+    var waveCornerRadius: Float = Utils.dp(context, 2)
+        set(value) {
+            waveform?.waveCornerRadius = value
+            field = value
+        }
+
+    var waveGravity: WaveGravity = WaveGravity.CENTER
+        set(value) {
+            waveform?.waveGravity = value
+            field = value
+        }
+
+    var onProgressChanged: SeekBarOnProgressChanged? = null
+        set(value) {
+            waveform?.onProgressChanged = value
+            field = value
+        }
+
+}
+
+private fun View.setBias(bias: Float, isVertical: Boolean) {
+
+    val params = this.getLayoutParams() as? ConstraintLayout.LayoutParams
+
+    if(isVertical){
+        params?.verticalBias = bias
+    }else{
+        params?.horizontalBias = bias
+    }
+    params?.let {
+        this.layoutParams = params
+    }
 }
