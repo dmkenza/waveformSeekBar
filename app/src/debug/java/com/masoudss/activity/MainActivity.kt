@@ -8,23 +8,68 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.widget.RadioButton
-import android.widget.SeekBar
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.masoudss.lib.*
-import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.*
-import android.widget.Toast
 import com.masoudss.R
+import org.jetbrains.anko.find
 
 
 class MainActivity : AppCompatActivity() {
 
     private val REQ_CODE_PICK_SOUND_FILE = 1
     private val REQ_CODE_STORAGE_PERMMISION = 2
+
+
+
+
+    val waveformSeekBar by  lazy {
+        find<WaveformSeekBar>(R.id.waveformSeekBar)
+    }
+
+    val waveProgress by  lazy {
+        find<SeekBar>(R.id.waveProgress)
+    }
+
+    val waveWidth by  lazy {
+        find<SeekBar>(R.id.waveWidth)
+    }
+
+    val waveCornerRadius by  lazy {
+        find<SeekBar>(R.id.waveCornerRadius)
+    }
+
+    val waveGap by  lazy {
+        find<SeekBar>(R.id.waveCornerRadius)
+    }
+
+    val gravityRadioGroup by  lazy {
+        find<RadioGroup>(R.id.gravityRadioGroup)
+    }
+
+    val waveColorRadioGroup by  lazy {
+        find<RadioGroup>(R.id.waveColorRadioGroup)
+    }
+
+    val progressColorRadioGroup by  lazy {
+        find<RadioGroup>(R.id.progressColorRadioGroup)
+    }
+
+    val icGithub by  lazy {
+        find<ImageView>(R.id.icGithub)
+    }
+
+    val icImport by  lazy {
+        find<ImageView>(R.id.icGithub)
+    }
+
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

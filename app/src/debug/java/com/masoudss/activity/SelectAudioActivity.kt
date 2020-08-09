@@ -6,17 +6,24 @@ import android.database.Cursor
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
-import kotlinx.android.synthetic.main.activity_select_audio.*
 import android.provider.MediaStore
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.masoudss.model.AudioModel
 import com.masoudss.R
 import com.masoudss.adapter.AudioAdapter
+import com.masoudss.lib.WaveformSeekBar
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
 
 
 class SelectAudioActivity : AppCompatActivity() {
+
+
+    val audioRecyclerView by  lazy {
+        find<RecyclerView>(R.id.audioRecyclerView)
+    }
 
     private val audioList = ArrayList<AudioModel>()
     private val projection = arrayOf(

@@ -3,11 +3,12 @@ package com.masoudss.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.masoudss.R
 import com.masoudss.activity.SelectAudioActivity
 import com.masoudss.model.AudioModel
-import kotlinx.android.synthetic.main.item_audio.view.*
+import org.jetbrains.anko.find
 
 class AudioAdapter(private val activity: SelectAudioActivity,private val audioList : ArrayList<AudioModel>) :
     RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {
@@ -21,7 +22,7 @@ class AudioAdapter(private val activity: SelectAudioActivity,private val audioLi
     }
 
     override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
-        holder.itemView.title.text = "${audioList[position].title}\n${audioList[position].artist}".trim()
+        holder.itemView.find<TextView>(R.id.title).text = "${audioList[position].title}\n${audioList[position].artist}".trim()
     }
 
     inner class AudioViewHolder(view: View) : RecyclerView.ViewHolder(view) {
