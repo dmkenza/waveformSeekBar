@@ -153,12 +153,10 @@ class WaveformSeekBar @JvmOverloads constructor(
         }
 
 
-    var progress: Float = 0f
-        set(value) {
-            waveform?.setProgress(value, false)
-            field = value
-        }
 
+    fun setProgress(progress: Float, invalidate: Boolean = true) {
+        waveform?.setProgress(progress, invalidate)
+    }
 
 
     var waveBackgroundColor: Int = Color.LTGRAY
