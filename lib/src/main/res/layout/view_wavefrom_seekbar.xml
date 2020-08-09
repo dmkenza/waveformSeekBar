@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.masoudss.lib.Waveform
+        android:id="@+id/waveform"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="23dp"
+
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="23dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:wave_background_color="@color/white"
+        app:wave_corner_radius="2dp"
+        app:wave_gap="2dp"
+        app:wave_gravity="center"
+        app:wave_min_height="5dp"
+        app:wave_progress="33"
+        app:wave_progress_color="@color/blue"
+        app:wave_width="5dp"
+        tools:background="@color/blue" />
+
+    <ImageView
+        android:id="@+id/bt_marker_left"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="8dp"
+
+        android:rotation="180"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/waveform"
+        app:srcCompat="@drawable/ic_indicator" />
+
+
+    <ImageView
+        android:id="@+id/bt_marker_right"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/waveform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_indicator" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
