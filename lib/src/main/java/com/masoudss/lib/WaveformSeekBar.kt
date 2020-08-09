@@ -7,9 +7,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.kadencelibrary.extension.view.afterMeasured
 import kotlinx.android.synthetic.main.view_wavefrom_seekbar.view.*
 
 
@@ -223,4 +223,19 @@ private fun View.setBias(bias: Float, isVertical: Boolean) {
     params?.let {
         this.layoutParams = params
     }
+}
+
+/**
+ *  Do action after view is drawn.
+ */
+
+private inline fun View.afterMeasured(crossinline f: View.() -> Unit) {
+    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            if (measuredWidth > 0 && measuredHeight > 0) {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+                f()
+            }
+        }
+    })
 }
