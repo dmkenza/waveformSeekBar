@@ -112,17 +112,19 @@ class Waveform : View {
             var waveCursorbackgroundColor = waveBackgroundColor
             var waveProgressCursorColor = waveProgressColor
 
+
+
             when {
 
                 (mWaveRect.right <= rangeLeftWidth && mWaveRect.right <= progressWidth && mWaveRect.right < rangRightWidth) -> {
-                    mWavePaint.color = Color.BLUE
-                    waveCursorbackgroundColor = Color.BLUE
+                    mWavePaint.color = rangeColorWithProgress
+                    waveCursorbackgroundColor = rangeColorWithProgress
                     mWavePaint.shader = null
                 }
 
                 (mWaveRect.right <= rangeLeftWidth && mWaveRect.right > progressWidth && mWaveRect.right < rangRightWidth) -> {
-                    mWavePaint.color = Color.RED
-                    waveCursorbackgroundColor = Color.RED
+                    mWavePaint.color =  rangeColor
+                    waveCursorbackgroundColor = rangeColor
                     mWavePaint.shader = null
                 }
 
@@ -135,14 +137,14 @@ class Waveform : View {
 
 
                 (mWaveRect.right >= rangeLeftWidth && mWaveRect.right < progressWidth && mWaveRect.right > rangRightWidth) -> {
-                    mWavePaint.color = Color.BLUE
-                    waveCursorbackgroundColor = Color.BLUE
+                    mWavePaint.color = rangeColorWithProgress
+                    waveCursorbackgroundColor = rangeColorWithProgress
                     mWavePaint.shader = null
                 }
 
                 (mWaveRect.right >= rangeLeftWidth && mWaveRect.right > progressWidth && mWaveRect.right > rangRightWidth) -> {
-                    mWavePaint.color = Color.RED
-                    waveCursorbackgroundColor = Color.RED
+                    mWavePaint.color =  rangeColor
+                    waveCursorbackgroundColor =  rangeColor
                     mWavePaint.shader = null
                 }
                 else -> {
@@ -156,11 +158,11 @@ class Waveform : View {
 
 
             if (mWaveRect.right <= rangeLeftWidth ||  rangeLeftWidth == progressWidth) {
-                waveProgressCursorColor = Color.BLUE
+                waveProgressCursorColor = rangeColorWithProgress
             } else if ((mWaveRect.right > rangeLeftWidth && mWaveRect.right < rangRightWidth)   || rangRightWidth == progressWidth ) {
                 waveProgressCursorColor = waveProgressColor
             } else {
-                waveProgressCursorColor = Color.BLUE
+                waveProgressCursorColor = rangeColorWithProgress
             }
 
 
@@ -315,6 +317,21 @@ class Waveform : View {
             field = value
             invalidate()
         }
+
+    var rangeColor: Int = Color.LTGRAY
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var rangeColorWithProgress: Int = Color.LTGRAY
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+
+
 
     var waveProgressColor: Int = Color.WHITE
         set(value) {

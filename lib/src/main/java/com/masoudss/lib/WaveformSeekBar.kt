@@ -19,6 +19,10 @@ class WaveformSeekBar @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+
+    private val rangeGap = 1f
+
+
     init {
         LayoutInflater.from(context).inflate(R.layout.view_wavefrom_seekbar, this, true)
 
@@ -53,7 +57,7 @@ class WaveformSeekBar @JvmOverloads constructor(
 
                     val percent = testX/ waveformWidth.toFloat()
 
-                    if(waveform.rangeRight < percent  * 100){
+                    if(waveform.rangeRight < (percent  * 100  + rangeGap)){
                         return@setOnTouchListener false
                     }
 
@@ -99,7 +103,7 @@ class WaveformSeekBar @JvmOverloads constructor(
 
                     val percent = testX/ waveformWidth.toFloat()
 
-                    if(waveform.rangeLeft > percent  * 100){
+                    if(waveform.rangeLeft > percent  * 100 - rangeGap){
                         return@setOnTouchListener false
                     }
 
@@ -141,11 +145,27 @@ class WaveformSeekBar @JvmOverloads constructor(
             field = value
         }
 
+
+
     var waveBackgroundColor: Int = Color.LTGRAY
         set(value) {
             waveform?.waveBackgroundColor = value
             field = value
         }
+
+
+    var rangeColor: Int = Color.LTGRAY
+        set(value) {
+            field = value
+            waveform?.rangeColor = value
+        }
+
+    var rangeColorWithProgress: Int = Color.LTGRAY
+        set(value) {
+            field = value
+            waveform?.rangeColorWithProgress = value
+        }
+
 
     var waveProgressColor: Int = Color.WHITE
         set(value) {
