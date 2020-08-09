@@ -75,7 +75,12 @@ class WaveformSeekBar @JvmOverloads constructor(
                     v.setBias(percent, false)
 
                     waveform.rangeLeft = percent  * 100f
-                    waveform.setProgress ( percent  * 100f, false )
+
+                    if(anchorProgressToRangeMarker){
+                        waveform.setProgress ( percent  * 100f, false )
+                    }
+
+
                     waveform.invalidate()
 
                 }
@@ -121,7 +126,10 @@ class WaveformSeekBar @JvmOverloads constructor(
                     v.setBias(percent, false)
 
                     waveform.rangeRight = percent  * 100f
-                    waveform.setProgress ( percent  * 100f, false)
+
+                    if(anchorProgressToRangeMarker){
+                        waveform.setProgress ( percent  * 100f, false )
+                    }
                     waveform.invalidate()
 
                 }
@@ -138,6 +146,12 @@ class WaveformSeekBar @JvmOverloads constructor(
             waveform?.sample = value
             field = value
         }
+
+    var anchorProgressToRangeMarker: Boolean  = false
+        set(value) {
+            field = value
+        }
+
 
     var progress: Float = 0f
         set(value) {

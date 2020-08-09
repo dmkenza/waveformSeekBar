@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import androidx.annotation.RequiresApi
+import kotlinx.android.synthetic.main.view_wavefrom_seekbar.view.*
 import java.io.File
 import kotlin.math.abs
 
@@ -317,6 +318,9 @@ class Waveform : View {
             field = value
             invalidate()
         }
+
+
+
 
     var rangeColor: Int = Color.LTGRAY
         set(value) {
